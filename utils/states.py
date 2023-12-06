@@ -1,11 +1,10 @@
 from aiogram.fsm.state import State, StatesGroup
 
-class ProductState(StatesGroup):
-    name = State()
-    price = State()
-    description = State()
+class SelectorState(StatesGroup):
     category = State()
-
+    under_category = State()
+    city = State()
+    
 class KeywordState(StatesGroup):
     name = State()
     

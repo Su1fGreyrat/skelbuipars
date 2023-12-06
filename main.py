@@ -10,12 +10,14 @@ import logging
 bot = Bot(token=config('TOKEN'))
 dp = Dispatcher()
 
+from handlers import selector
+
 db = BotDB()
 
 logging.basicConfig(level=logging.INFO)
 
 async def main():
-    dp.include_routers(keyword.router)
+    dp.include_routers(keyword.router, selector.router)
     await dp.start_polling(bot)
 
 if __name__ == '__main__':

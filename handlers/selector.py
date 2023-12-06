@@ -1,0 +1,95 @@
+from database.data import BotDB
+from markup import inline as kb
+from utils import states
+from main import bot
+from decouple import config
+
+from aiogram import Router, types, F
+from aiogram.fsm.context import FSMContext
+from aiogram.types import Message
+from aiogram.filters import Command
+
+router = Router()
+db = BotDB()
+ADMIN_ID = config("ADMIN")
+
+
+@router.message(F.text == 'Селекторы')
+async def new_selector(message: Message, state: FSMContext):
+    await message.answer('🛍 Выберите желаемое действие:', reply_markup=kb.selectors)
+    
+    
+@router.callback_query(F.data == 'new_selector')
+async def suc_new_selector(callback_query: types.CallbackQuery, state: FSMContext):
+    categories = db.get_categories()
+    formatted_categories = [category[1] for category in categories]
+    
+    keyboard = kb.make_row_inline_keyboard_for(for_='set-category', items=formatted_categories)
+    
+    await bot.send_message(callback_query.from_user.id, 'Выберите категорию:', reply_markup=keyboard)
+    await state.set_state(states.SelectorState.category)
+
+@router.callback_query(F.data.startswith('set-category'))
+async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMContext):
+    await bot.answer_callback_query(callback_query.id)
+    callback_data = callback_query.data
+
+    selector_category = callback_data.split('_')[1] 
+    await state.update_data(category=selector_category)
+    
+    categories = db.get_under_categories(parametr=selector_category)
+    formatted_categories = [category[1] for category in categories]
+    
+    keyboard = kb.make_row_inline_keyboard_for(for_='set-under-category', items=formatted_categories)
+    
+    await bot.send_message(callback_query.from_user.id, f'Категория: {selector_category}\n\nВыберите под-категорию:',
+                           reply_markup=keyboard)
+    await state.set_state(states.SelectorState.under_category)
+    
+@router.callback_query(F.data.startswith('set-under-category'))
+async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMContext):
+    await bot.answer_callback_query(callback_query.id)
+    callback_data = callback_query.data
+    data = await state.get_data()
+
+    selector_under_category = callback_data.split('_')[1] 
+    await state.update_data(under_category=selector_under_category)
+    
+    cities = db.get_cities()
+    formatted_cities = [city[1] for city in cities]
+    
+    keyboard = kb.make_row_inline_keyboard_to(prefix='set-city', cities=formatted_cities)
+    
+    await bot.send_message(callback_query.from_user.id, f'Категория: {data["category"]}\nПод-категория: {selector_under_category}\n\nВыберите город:',
+                           reply_markup=keyboard)
+    await state.set_state(states.SelectorState.city)
+    
+@router.callback_query(F.data.startswith('set-city'))
+async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMContext):
+    await bot.answer_callback_query(callback_query.id)
+    callback_data = callback_query.data
+    data = await state.get_data()
+    
+    city = callback_data.split('_')[1] 
+    await state.update_data(city=city)
+    
+    new_selector = db.new_selector(category=data["category"], under_category=data["under_category"], city=city)
+    
+    if new_selector == 0:
+        await bot.send_message(callback_query.from_user.id, f'Создан новый селектор!\n\nКатегория: {data["category"]}\nПод-категория: {data["under_category"]}\nГород: {city}')
+    elif new_selector == 1:
+        await bot.send_message(callback_query.from_user.id, f'Селектор с такими параметрами существует!\n\nКатегория: {data["category"]}\nПод-категория: {data["under_category"]}\nГород: {city}')
+        
+    await state.clear()
+    
+
+
+
+
+
+
+
+
+
+
+
