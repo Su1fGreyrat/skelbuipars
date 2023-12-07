@@ -41,6 +41,15 @@ class BotDB:
         ''')
         
         self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS adv (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                city TEXT,
+                link TEXT
+            )
+        ''')
+        
+        self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS categories (
                 id INTEGER PRIMARY KEY,
                 name TEXT,
@@ -139,18 +148,25 @@ class BotDB:
         selectors = self.cursor.execute("SELECT * FROM selectors").fetchall()
         return selectors
     
-    def get_link(self, category, under_category, city, page):
+    def get_link(self, category, under_category, city):
         if under_category:
             city_id = self.cursor.execute("SELECT uniq_id FROM cities WHERE name = ?", (city, )).fetchone()
             u_link = self.cursor.execute("SELECT link FROM under_categories WHERE name = ?", (under_category, )).fetchone()
-            link = str(u_link[0]) + f'{page}?cities={city_id[0]}'
+            link = str(u_link[0]) + f'?cities={city_id[0]}'
         else:
             city_id = self.cursor.execute("SELECT uniq_id FROM cities WHERE name = ?", (city, )).fetchone()
             u_link = self.cursor.execute("SELECT link FROM categories WHERE name = ?", (category, )).fetchone()
-            link = u_link + f'{page}?cities={city_id}'
+            link = u_link + f'?cities={city_id}'
             
         return link
+    
+    def add_adv(self, name, city, link):
+        adv_exsists = self.cursor.execute("SELECT * FROM adv WHERE name = ? AND city = ? AND link = ?", (name, city, link)).fetchall()
             
-        
+        if not adv_exsists:
+            self.cursor.execute('INSERT INTO adv (name, city, link) VALUES (?,?,?)', (name, city, link))
+            self.db.commit()
+            return 'not_exists'
+            
     def close_db(self):
         self.db.close()

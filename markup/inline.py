@@ -21,10 +21,10 @@ selectors = InlineKeyboardMarkup(
     inline_keyboard=[
         [
             InlineKeyboardButton(text='Добавить', callback_data='new_selector'),
-            InlineKeyboardButton(text='Удалить', callback_data='delete_keyword')
+            InlineKeyboardButton(text='Удалить', callback_data='delete_selector')
         ],
         [
-            InlineKeyboardButton(text='Посмотреть все', callback_data='all_keywords')
+            InlineKeyboardButton(text='Посмотреть все', callback_data='all_selectors')
         ]
     ]
 )
