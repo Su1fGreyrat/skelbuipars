@@ -11,7 +11,7 @@ import logging
 bot = Bot(token=config('TOKEN'))
 dp = Dispatcher()
 
-from handlers import selector, newsletter
+from handlers import selector, newsletter, user_cmd
 import parsing
 
 db = BotDB()
@@ -19,7 +19,7 @@ db = BotDB()
 logging.basicConfig(level=logging.INFO)
 
 async def start_bot():
-    dp.include_routers(keyword.router, selector.router, newsletter.router)
+    dp.include_routers(keyword.router, user_cmd.router, selector.router, newsletter.router)
     await dp.start_polling(bot) 
 
 def start_bot_sync():

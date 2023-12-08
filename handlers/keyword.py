@@ -44,11 +44,18 @@ async def suc_new_keyword(callback_query: types.CallbackQuery, state: FSMContext
 async def all_keywords(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
     
-    keywords = db.get_keywords()
-    
-    message = "Список ключевых слов:\n- " + "\n- ".join(keyword[1] for keyword in keywords)
-    
+    keywords = db.get_keywords() # [(3, 'Baldų valymas / Generalinis patalpų valymas /'), (5, None), (6, '3')]
+    print(keywords)
+
+    if keywords:
+        message = "Список ключевых слов:\n"
+        message += "- " + "\n- ".join(str(keyword[1]) for keyword in keywords)
+    else:
+        message = "Нет ключевых слов."
+
+    # Send the message to the user (you might want to replace this with your actual code to send messages)
     await bot.send_message(callback_query.from_user.id, message)
+
     
 @router.callback_query(F.data == 'delete_keyword')
 async def del_keyword(callback_query: types.CallbackQuery, state: FSMContext):

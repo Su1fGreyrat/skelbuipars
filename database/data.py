@@ -17,6 +17,15 @@ class BotDB:
         ''')
         
         self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS admins (
+                id INTEGER PRIMARY KEY,
+                user_id INTEGER,
+                name TEXT,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        
+        self.cursor.execute('''
             CREATE TABLE IF NOT EXISTS cities (
                 id INTEGER PRIMARY KEY,
                 name TEXT,
@@ -37,6 +46,14 @@ class BotDB:
                 category_name TEXT,
                 under_category_name TEXT,
                 city TEXT
+            )
+        ''')
+        
+        self.cursor.execute('''
+            CREATE TABLE IF NOT EXISTS chats (
+                id INTEGER PRIMARY KEY,
+                name TEXT,
+                chat_id TEXT
             )
         ''')
         
@@ -70,10 +87,13 @@ class BotDB:
     def new_user(self, user_id, name):
         user_exists = self.cursor.execute('SELECT * FROM users WHERE user_id = ?', (user_id,)).fetchone()
         if not user_exists:
-            self.cursor.execute('INSERT INTO users (user_id, name, balance, cart) VALUES (?, ?, 0, "")', (user_id, name))
+            self.cursor.execute('INSERT INTO users (user_id, name) VALUES (?, ?)', (user_id, name))
+            self.db.commit()
         else:
             self.cursor.execute("UPDATE users SET name = ? WHERE user_id = ?", (name, user_id))
-        self.db.commit()
+            self.db.commit()
+            return 'user_ex'
+            
 
     def get_users(self):
         self.cursor.execute('SELECT * FROM users')
@@ -161,12 +181,40 @@ class BotDB:
         return link
     
     def add_adv(self, name, city, link):
-        adv_exsists = self.cursor.execute("SELECT * FROM adv WHERE name = ? AND city = ? AND link = ?", (name, city, link)).fetchall()
+        adv_exsists = self.cursor.execute("SELECT * FROM adv WHERE name = ? AND link = ?", (name, link)).fetchall()
             
         if not adv_exsists:
             self.cursor.execute('INSERT INTO adv (name, city, link) VALUES (?,?,?)', (name, city, link))
             self.db.commit()
             return 'not_exists'
+    
+    def get_selectors_with_category(self, category):
+        selectors = self.cursor.execute("SELECT * FROM selectors WHERE category_name = ?", (category, )).fetchall()
+        return selectors
+    
+    def delete_selector(self, id):
+        selector_exsits = self.cursor.execute("SELECT * FROM selectors WHERE id = ?", (id,)).fetchone()
+        if selector_exsits:
+            self.cursor.execute("DELETE FROM selectors WHERE id = ?", (id,))
+            self.db.commit()
+    
+    def user_ex(self, user_id):
+        user_ex = self.cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id, )).fetchone()
+        return user_ex
+    
+    def add_chat(self, chat_id, chat_name):
+        chat_ex = self.cursor.execute("SELECT * FROM chats WHERE chat_id = ?", (chat_id,)).fetchone()
+        if not chat_ex:
+            self.cursor.execute("INSERT INTO chats (name, chat_id) VALUES (?,?)", (chat_name, chat_id))
+            self.db.commit()
+            return f'Чат {chat_name} добавлен'
+        else:
+            return f'Чат {chat_name} уже существует'
+    def get_chats(self):
+        chats= self.cursor.execute("SELECT * FROM chats").fetchall()
+        return chats
+        
+            
             
     def close_db(self):
         self.db.close()

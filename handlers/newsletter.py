@@ -13,6 +13,8 @@ router = Router()
 db = BotDB()
 ADMIN_ID = config("ADMIN")
 
-async def handler(text):
-    await bot.send_message(ADMIN_ID, text)
+async def handler(name, city, link):
+    chats = db.get_chats()
+    for chat in chats:
+        await bot.send_message(chat[2], f'{name}\n{city}\n<a href="{link}">Ссылка</a>', parse_mode='HTML')
     

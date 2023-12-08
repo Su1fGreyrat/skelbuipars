@@ -2,7 +2,7 @@ from seleniumbase import Driver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-#from handlers import newsletter
+from handlers import newsletter
 from database.data import BotDB
 import time
 import asyncio
@@ -10,14 +10,20 @@ import asyncio
 url = "https://ru.skelbiu.lt/"
 
 async def main():
-    db = BotDB()
-    with Driver(uc=True) as driver:
-        while True:
-            selectors = db.get_selectors()
-            if not selectors:
-                break
-            await process_selectors(driver, selectors, db)
-
+    while True:
+        try:
+            db = BotDB()
+            with Driver(uc=True, headless=True) as driver:
+                while True:
+                    selectors = db.get_selectors()
+                    if not selectors:
+                        break
+                    await process_selectors(driver, selectors, db)
+        except Exception as e:
+            print(e)
+        finally:
+            driver.quit()
+            
 async def process_selectors(driver, selectors, db):
     for selector in selectors:
         link = db.get_link(category=selector[1], under_category=selector[2], city=selector[3])
@@ -27,7 +33,7 @@ async def process_selectors(driver, selectors, db):
         
 def handle_agreement(driver):
     try:
-        agree_btn = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, 'onetrust-accept-btn-handler')))
+        agree_btn = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'onetrust-accept-btn-handler')))
         if agree_btn:
             agree_btn.click()
             time.sleep(0.5)
@@ -40,14 +46,15 @@ async def process_link(driver, link, db):
         driver.get(link)
         handle_agreement(driver)
         await get_ad(driver, db)
+        await newsletter.handler(name='Parser', city='parsing', link='github.com')
     except Exception as e:
         print('EROR: ',e)
 
 async def process_pagination(driver, db):
     while True:
-        page = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
+        page = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
         print(int(page.text))
-        if int(page.text) <= 25:
+        if int(page.text) <= 15:
             print('Страница ', page.text)
             
             pagination = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.pagination_link')))
@@ -72,7 +79,6 @@ async def process_pagination(driver, db):
 async def get_ad(driver, db):
     while True:
         advs = WebDriverWait(driver, 2).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.standard-list-item')))
-        keywords = db.get_keywords() 
 
         if not advs:
             break
@@ -81,29 +87,23 @@ async def get_ad(driver, db):
             adv_content = WebDriverWait(adv, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'content-block')))
             link = adv.get_attribute('href')
             adv_city = adv.find_element(By.CLASS_NAME, 'second-dataline').text
-            adv_name = WebDriverWait(adv_content, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'title'))).text
-            keywords = [keyword[0] for keyword in db.get_keywords()]  # Assuming keywords are in the first column of each tuple
-
-            for adv in advs:
-                adv_content = WebDriverWait(adv, 2).until(EC.presence_of_element_located((By.CLASS_NAME, 'content-block')))
-                link = adv.get_attribute('href')
-                adv_city = adv.find_element(By.CLASS_NAME, 'second-dataline').text
-                adv_name = WebDriverWait(adv_content, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'title'))).text
-                
-                keyword = [keyword[1] for keyword in db.get_keywords()]
+            adv_name = WebDriverWait(adv_content, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'title'))).text 
+            keywords = [keyword[1] for keyword in db.get_keywords()]
+            print(keywords)
+            for keyword in keywords:
                 print(keyword)
                 
-                if adv_name in keyword:
-                    print(keyword[0])
+                if keyword.lower() in adv_name.lower():
                     exists = db.add_adv(name=adv_name, city=adv_city, link=link)
-                    print(f'{adv_name} -- {adv_city}')
+                    #print(f'{adv_name} -- {adv_city}')
                     if exists: 
                         print("NEW!")
+                        await newsletter.handler(name=adv_name, city=adv_city, link=link)
+                        asyncio.sleep(0.5)
                     else: 
                         print('OLD!')
                 else:
                     print("NO KEYWORD", adv_name)
-                    break 
         br = await process_pagination(driver, db)
         if br == 'break':
             break
@@ -208,6 +208,6 @@ async def get_ad(driver, db):
 #        driver.close()
 #        driver.quit()
         
-if __name__ == '__main__':
-    asyncio.run(main())
+#if __name__ == '__main__':
+#    asyncio.run(main())
     
