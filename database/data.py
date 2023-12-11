@@ -1,5 +1,5 @@
 import sqlite3
-
+import time
 
 class BotDB:
     def __init__(self, database_name='BotDB.db'):
@@ -99,14 +99,14 @@ class BotDB:
         self.cursor.execute('SELECT * FROM users')
         return self.cursor.fetchall()
     
-    def new_keyword(self, word):
-        category_exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ?", (word,)).fetchone()
+    def new_keyword(self, word, category, under_category, city):
+        category_exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ? AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city)).fetchone()
         if not category_exists:
-            self.cursor.execute("INSERT INTO key_words (word) VALUES (?)", (word,))
+            self.cursor.execute("INSERT INTO key_words (word, category, under_category, city) VALUES (?,?,?,?)", (word, category, under_category, city))
             self.db.commit()
-            return f'Слово {word} добавленно'
+            return f'Запрос добавлен: Слово {word}\nКатегория: {category}\nПод категория: {under_category}\nГород: {city}'
         else:
-            return f'Слово {word} уже существует'
+            return f'Запрос со словом {word} с такими параметрами уже существует'
             
     def get_keywords(self):
         words = self.cursor.execute("SELECT * FROM key_words").fetchall()
@@ -118,7 +118,7 @@ class BotDB:
         if category_exists:
             self.cursor.execute("DELETE FROM key_words WHERE word = ?", (word,))
             self.db.commit()
-            return f'Слово {word} удаленно'
+            return f'Слово {word} удалено'
         else:
             return f'Невозможно удалить слово {word}'
         
@@ -140,9 +140,6 @@ class BotDB:
         if not selector_exsits:
             self.cursor.execute("INSERT INTO selectors (category_name, under_category_name, city) VALUES (?,?,?)", (category, under_category, city))
             self.db.commit()
-            return 0
-        else:
-            return 1
         
     def new_category(self, name, link):
         cat_exsists = self.cursor.execute("SELECT * FROM categories WHERE name = ?", (name,)).fetchone()
@@ -157,6 +154,7 @@ class BotDB:
         if not cat_exsists:
             self.cursor.execute('INSERT INTO under_categories (name, link, category) VALUES (?,?,?)', (name, link, category))
             self.db.commit()
+    
     def new_city(self, city, uniq_id):
         city_exsists = self.cursor.execute("SELECT * FROM cities WHERE name = ?", (city,)).fetchone()
         
@@ -202,19 +200,42 @@ class BotDB:
         user_ex = self.cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id, )).fetchone()
         return user_ex
     
-    def add_chat(self, chat_id, chat_name):
+    def admin_ex(self, user_id):
+        user_ex = self.cursor.execute("SELECT * FROM admins WHERE user_id = ?", (user_id, )).fetchone()
+        return user_ex
+    
+    def add_chat(self, chat_id):
         chat_ex = self.cursor.execute("SELECT * FROM chats WHERE chat_id = ?", (chat_id,)).fetchone()
         if not chat_ex:
-            self.cursor.execute("INSERT INTO chats (name, chat_id) VALUES (?,?)", (chat_name, chat_id))
+            self.cursor.execute("INSERT INTO chats (chat_id) VALUES (?)", (chat_id,))
             self.db.commit()
-            return f'Чат {chat_name} добавлен'
+            return f'Чат добавлен'
         else:
-            return f'Чат {chat_name} уже существует'
+            return f'Чат уже существует'
+        
+    def add_to_admins(self, user_id, name):
+        admin_exists = self.cursor.execute('SELECT * FROM admins WHERE user_id = ?', (user_id,)).fetchone()
+        if not admin_exists:
+            self.cursor.execute('INSERT INTO admins (user_id, name) VALUES (?, ?)', (user_id, name))
+            self.db.commit()
+        else:
+            self.cursor.execute("UPDATE admins SET name = ? WHERE user_id = ?", (name, user_id))
+            self.db.commit()
+            return 'admin_ex'
+        
+    def get_kw(self, category, under_category, city):
+        kw = self.cursor.execute("SELECT * FROM key_words WHERE category = ? AND under_category = ? AND city = ?", (category, under_category, city)).fetchall()
+        print(kw)
+        if kw:
+            pass
+        else:
+            print(kw)
+            time.sleep(3)
+        return kw   
+        
     def get_chats(self):
         chats= self.cursor.execute("SELECT * FROM chats").fetchall()
-        return chats
-        
-            
+        return chats     
             
     def close_db(self):
         self.db.close()

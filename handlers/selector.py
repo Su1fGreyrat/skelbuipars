@@ -11,16 +11,17 @@ from aiogram.filters import Command
 
 router = Router()
 db = BotDB()
-ADMIN_ID = config("ADMIN")
 
 
 @router.message(F.text == 'Селекторы')
 async def new_selector(message: Message, state: FSMContext):
-    await message.answer('🛍 Выберите желаемое действие:', reply_markup=kb.selectors)
+    await message.answer('Выберите желаемое действие:', reply_markup=kb.selectors)
     
     
 @router.callback_query(F.data == 'new_selector')
 async def suc_new_selector(callback_query: types.CallbackQuery, state: FSMContext):
+    await bot.answer_callback_query(callback_query.id)
+    
     categories = db.get_categories()
     formatted_categories = [category[1] for category in categories]
     
@@ -40,13 +41,13 @@ async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMC
     categories = db.get_under_categories(parametr=selector_category)
     formatted_categories = [category[1] for category in categories]
     
-    keyboard = kb.make_row_inline_keyboard_for(for_='set-under-category', items=formatted_categories)
+    keyboard = kb.make_row_inline_keyboard_for(for_='suc', items=formatted_categories)
     
     await bot.send_message(callback_query.from_user.id, f'Категория: {selector_category}\n\nВыберите под-категорию:',
                            reply_markup=keyboard)
     await state.set_state(states.SelectorState.under_category)
     
-@router.callback_query(F.data.startswith('set-under-category'))
+@router.callback_query(F.data.startswith('suc'))
 async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
     callback_data = callback_query.data
@@ -82,32 +83,34 @@ async def add_selector_selector(callback_query: types.CallbackQuery, state: FSMC
         
     await state.clear()
     
-@router.callback_query(F.data == 'delete_selector')
-async def delete_selector(callback_query: types.CallbackQuery, state: FSMContext):
-    categories = db.get_categories()
-    formatted_categories = [category[1] for category in categories]
-    
-    keyboard = kb.make_row_inline_keyboard_for(for_='delete-selector-category', items=formatted_categories)
-    
-    await bot.send_message(callback_query.from_user.id, 'Выберите категорию:', reply_markup=keyboard)
 
-@router.callback_query(F.data.startswith('delete-selector-category'))
-async def delete_selector_from(callback_query: types.CallbackQuery, state: FSMContext):
+@router.callback_query(F.data == 'all_selectors')
+async def delete_selector(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
-    callback_data = callback_query.data
-    selector_category = callback_data.split('_')[1] 
     
-    selectors_with_category = db.get_selectors_with_category(selector_category)
-    print(selectors_with_category)
-    for selector in selectors_with_category:
-        await bot.send_message(callback_query.from_user.id, f'ID: {selector[0]}\n\nКатегория: {selector[1]}\nПод категория: {selector[2]}\n Город: {selector[3]}')
+    selectors= db.get_selectors()
+    if selectors:
+        for selector in selectors:
+            await bot.send_message(callback_query.from_user.id, f'ID: {selector[0]}\n\nКатегория: {selector[1]}\nПод категория: {selector[2]}\n Город: {selector[3]}')
+    else:        
+        await bot.send_message(callback_query.from_user.id, f'Нет доступных селекторов')
         
-    formatted_categories = [selector[0] for selector in selectors_with_category]
+@router.callback_query(F.data == 'delete_selector')
+async def delete_selector(callback_query: types.CallbackQuery):
+    await bot.answer_callback_query(callback_query.id)
+
+    selectors= db.get_selectors()
+    
+    for selector in selectors:
+        await bot.send_message(callback_query.from_user.id, f'ID: {selector[0]}\n\nКатегория: {selector[1]}\nПод категория: {selector[2]}\n Город: {selector[3]}')
+    
+    formatted_categories = [selector[0] for selector in selectors]
+    
     keyboard = kb.make_row_inline_keyboard_for(for_='delete-selector', items=formatted_categories)
     if formatted_categories:
         await bot.send_message(callback_query.from_user.id, 'Выберите ID селектора которого хотите удалить:', reply_markup=keyboard)
     else:
-        await bot.send_message(callback_query.from_user.id, f'В это категории нет селекторов')
+        await bot.send_message(callback_query.from_user.id, f'Нет доступных селекторов')
         
 @router.callback_query(F.data.startswith('delete-selector'))
 async def delete_selector_db(callback_query: types.CallbackQuery, state: FSMContext):
@@ -121,14 +124,11 @@ async def delete_selector_db(callback_query: types.CallbackQuery, state: FSMCont
         await bot.send_message(callback_query.from_user.id, f'Селектор с ID: {selector_id} удален')
     else:
         await bot.send_message(callback_query.from_user.id, f'Селектор с таким ID не найден')
-        
-@router.callback_query(F.data == 'all_selectors')
-async def delete_selector(callback_query: types.CallbackQuery, state: FSMContext):
-    selectors= db.get_selectors()
-    
-    for selector in selectors:
-        await bot.send_message(callback_query.from_user.id, f'ID: {selector[0]}\n\nКатегория: {selector[1]}\nПод категория: {selector[2]}\n Город: {selector[3]}')
 
+            
+
+    
+    
 
 
 

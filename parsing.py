@@ -13,49 +13,49 @@ async def main():
     while True:
         try:
             db = BotDB()
-            with Driver(uc=True, headless=True) as driver:
+            with Driver(uc=True) as driver:
                 while True:
                     selectors = db.get_selectors()
                     if not selectors:
                         break
                     await process_selectors(driver, selectors, db)
         except Exception as e:
-            print(e)
+            pass
         finally:
             driver.quit()
             
 async def process_selectors(driver, selectors, db):
     for selector in selectors:
         link = db.get_link(category=selector[1], under_category=selector[2], city=selector[3])
-        print(link)
-        time.sleep(1)
-        await process_link(driver, link, db)
+        e = await process_link(driver, link, db, selector)
+        if e == 'EROR':
+            print(e)
+            break
         
 def handle_agreement(driver):
     try:
-        agree_btn = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, 'onetrust-accept-btn-handler')))
+        agree_btn = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.ID, 'onetrust-accept-btn-handler')))
         if agree_btn:
             agree_btn.click()
-            time.sleep(0.5)
     except Exception as e:
         pass
 
-async def process_link(driver, link, db):
+async def process_link(driver, link, db, selector):
     try:
         driver.maximize_window()
         driver.get(link)
         handle_agreement(driver)
-        await get_ad(driver, db)
-        await newsletter.handler(name='Parser', city='parsing', link='github.com')
+        await get_ad(driver, db, selector)
     except Exception as e:
-        print('EROR: ',e)
-
-async def process_pagination(driver, db):
+        time.sleep(2)
+        print(e)
+        print("Бляяяяяяяяяяяя")
+        return 'EROR'
+        
+async def process_pagination(driver, db, selector):
     while True:
-        page = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
-        print(int(page.text))
-        if int(page.text) <= 15:
-            print('Страница ', page.text)
+        page = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
+        if int(page.text) <= 10:
             
             pagination = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.pagination_link')))
             next_button = None
@@ -67,16 +67,13 @@ async def process_pagination(driver, db):
 
             if next_button:
                 next_button.click()
-                print('Next page')
-                time.sleep(0.1)
-                await get_ad(driver, db)
+                await get_ad(driver, db, selector)
             else:
-                print('No next page button found')
                 return 'break'
         else:
             return 'break'
     
-async def get_ad(driver, db):
+async def get_ad(driver, db, selector):
     while True:
         advs = WebDriverWait(driver, 2).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.standard-list-item')))
 
@@ -88,23 +85,33 @@ async def get_ad(driver, db):
             link = adv.get_attribute('href')
             adv_city = adv.find_element(By.CLASS_NAME, 'second-dataline').text
             adv_name = WebDriverWait(adv_content, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'title'))).text 
-            keywords = [keyword[1] for keyword in db.get_keywords()]
-            print(keywords)
-            for keyword in keywords:
-                print(keyword)
-                
-                if keyword.lower() in adv_name.lower():
-                    exists = db.add_adv(name=adv_name, city=adv_city, link=link)
-                    #print(f'{adv_name} -- {adv_city}')
-                    if exists: 
-                        print("NEW!")
-                        await newsletter.handler(name=adv_name, city=adv_city, link=link)
-                        asyncio.sleep(0.5)
-                    else: 
-                        print('OLD!')
-                else:
-                    print("NO KEYWORD", adv_name)
-        br = await process_pagination(driver, db)
+            adv_price_line_1 = WebDriverWait(adv_content, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'price-line')))
+            adv_price_line = None
+            try:
+                adv_price_line = WebDriverWait(adv_price_line_1, 1).until(EC.presence_of_element_located((By.CLASS_NAME, 'price'))).text
+            except Exception as e:
+                pass
+            selectors = db.get_kw(category=selector[1], under_category=selector[2], city=selector[3])
+            keywords = [keyword[1] for keyword in selectors]
+            if keywords:
+                for keyword in keywords:
+                    if 'мин. назад' in adv_city:    
+                        if keyword.lower() in adv_name.lower():
+                            for i in range(1, 20):
+                                if f' {i} ' in f' {adv_city} ' or adv_city.startswith(f'{i} ') or adv_city.endswith(f' {i}'):
+                                    exists = db.add_adv(name=adv_name, city=adv_city, link=link)
+                                    if exists:
+                                        if adv_price_line:
+                                            adv_price = f'Цена: {adv_price_line}'
+                                            await newsletter.handler(name=adv_name, price=adv_price, city=adv_city, link=link)
+                                        else:
+                                            adv_price = 'Цена: не указана'
+                                            await newsletter.handler(name=adv_name, price=adv_price, city=adv_city, link=link)
+                                        await asyncio.sleep(0.5)
+                                i += 1
+            else:
+                break
+        br = await process_pagination(driver, db, selector)
         if br == 'break':
             break
         

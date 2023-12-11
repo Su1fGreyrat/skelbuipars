@@ -19,6 +19,16 @@ keyword_main = InlineKeyboardMarkup(
     ]
 )
 
+request_main = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [
+            InlineKeyboardButton(text='Добавить', callback_data='new_request'),
+            InlineKeyboardButton(text='Удалить', callback_data='delete_request')
+        ]
+    ]
+)
+
+
 selectors = InlineKeyboardMarkup(
     inline_keyboard=[
         [
