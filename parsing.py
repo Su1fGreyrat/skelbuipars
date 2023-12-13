@@ -5,6 +5,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from handlers import newsletter
 from database.data import BotDB
 import time
+import logging
 import asyncio
 
 url = "https://ru.skelbiu.lt/"
@@ -19,6 +20,7 @@ async def main():
                     if not selectors:
                         break
                     await process_selectors(driver, selectors, db)
+                    logging.info("Start")
         except Exception as e:
             pass
         finally:
@@ -27,8 +29,11 @@ async def main():
 async def process_selectors(driver, selectors, db):
     for selector in selectors:
         link = db.get_link(category=selector[1], under_category=selector[2], city=selector[3])
+        await newsletter.handler_to_admin(name='link proc selectors', price='none', link=link, city='')    
         e = await process_link(driver, link, db, selector)
         if e == 'EROR':
+            logging.info("EROR SELECTOR PROC")
+            await newsletter.handler_to_admin(name='eror_proc_selec', price='', link='', city='')
             print(e)
             break
         
@@ -46,33 +51,42 @@ async def process_link(driver, link, db, selector):
         driver.get(link)
         handle_agreement(driver)
         await get_ad(driver, db, selector)
+        logging.info("get ad")
     except Exception as e:
-        time.sleep(2)
-        print(e)
-        print("Бляяяяяяяяяяяя")
-        return 'EROR'
+        logging.info("EROR IN PROC LINK")
+        await newsletter.handler_to_admin(name=f'eror {e}', price='', link='', city='')
+
         
 async def process_pagination(driver, db, selector):
     while True:
-        page = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
-        if int(page.text) <= 10:
-            
-            pagination = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.pagination_link')))
-            next_button = None
+        try:
+            page = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'strong.pagination_selected')))
+            if int(page.text) <= 15:
+                pagination = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.pagination_link')))
+                next_button = None
+                
+                await newsletter.handler_to_admin(name='page', price=page.text, link='', city='')
+                
+                
+                for page_link in pagination:
+                    if page_link.text.strip() == '»':
+                        next_button = page_link
+                        break
 
-            for page_link in pagination:
-                if page_link.text.strip() == '»':
-                    next_button = page_link
-                    break
-
-            if next_button:
-                next_button.click()
-                await get_ad(driver, db, selector)
+                if next_button:
+                    next_button.click()
+                    await get_ad(driver, db, selector)
+                    logging.info("pagination")
+                
+                else:
+                    return 'break'
             else:
                 return 'break'
-        else:
-            return 'break'
-    
+        except Exception as e:
+            print(e)
+            await newsletter.handler_to_admin(name='page_eror', price=page.text, link='www.github.com', city='None Programmer')
+            break
+             
 async def get_ad(driver, db, selector):
     while True:
         advs = WebDriverWait(driver, 2).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, 'a.standard-list-item')))
@@ -97,7 +111,7 @@ async def get_ad(driver, db, selector):
                 for keyword in keywords:
                     if 'мин. назад' in adv_city:    
                         if keyword.lower() in adv_name.lower():
-                            for i in range(1, 20):
+                            for i in range(1, 10):
                                 if f' {i} ' in f' {adv_city} ' or adv_city.startswith(f'{i} ') or adv_city.endswith(f' {i}'):
                                     exists = db.add_adv(name=adv_name, city=adv_city, link=link)
                                     if exists:

@@ -6,7 +6,10 @@ from aiogram.types import (
 main = ReplyKeyboardMarkup(
     keyboard=[
         [
-            KeyboardButton(text="Запросы")
+            KeyboardButton(text="Создать запрос")
+        ],
+        [
+            KeyboardButton(text="Удалить запрос")
         ]
     ],
     resize_keyboard=True

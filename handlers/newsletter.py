@@ -19,3 +19,14 @@ async def handler(name, price, city, link):
             await asyncio.sleep(1)
     except:
         pass
+    
+
+async def handler_to_admin(name, price, city, link):
+    print("AAAAAA")
+    admins = db.get_users()
+    try:
+        for chat in admins:
+            await bot.send_message(chat[1], f'{name}\n{price}\n{city}\n<a href="{link}">Ссылка</a>', parse_mode='HTML')
+            await asyncio.sleep(1)
+    except:
+        pass

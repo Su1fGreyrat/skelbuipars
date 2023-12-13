@@ -105,8 +105,8 @@ async def delete_selector(callback_query: types.CallbackQuery):
         await bot.send_message(callback_query.from_user.id, f'ID: {selector[0]}\n\nКатегория: {selector[1]}\nПод категория: {selector[2]}\n Город: {selector[3]}')
     
     formatted_categories = [selector[0] for selector in selectors]
-    
     keyboard = kb.make_row_inline_keyboard_for(for_='delete-selector', items=formatted_categories)
+    
     if formatted_categories:
         await bot.send_message(callback_query.from_user.id, 'Выберите ID селектора которого хотите удалить:', reply_markup=keyboard)
     else:
@@ -116,9 +116,8 @@ async def delete_selector(callback_query: types.CallbackQuery):
 async def delete_selector_db(callback_query: types.CallbackQuery, state: FSMContext):
     await bot.answer_callback_query(callback_query.id)
     callback_data = callback_query.data
-
-    selector_id = callback_data.split('_')[1] 
-    
+    selector_id = callback_data.split('_')[1]
+     
     db.delete_selector(id=selector_id)
     if selector_id:
         await bot.send_message(callback_query.from_user.id, f'Селектор с ID: {selector_id} удален')

@@ -96,15 +96,15 @@ class BotDB:
             
 
     def get_users(self):
-        self.cursor.execute('SELECT * FROM users')
-        return self.cursor.fetchall()
+        users = self.cursor.execute('SELECT * FROM admins').fetchall()
+        return users
     
     def new_keyword(self, word, category, under_category, city):
         category_exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ? AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city)).fetchone()
         if not category_exists:
             self.cursor.execute("INSERT INTO key_words (word, category, under_category, city) VALUES (?,?,?,?)", (word, category, under_category, city))
             self.db.commit()
-            return f'Запрос добавлен: Слово {word}\nКатегория: {category}\nПод категория: {under_category}\nГород: {city}'
+            return f'Запрос добавлен!\n\nСлово {word}\nКатегория: {category}\nПод категория: {under_category}\nГород: {city}'
         else:
             return f'Запрос со словом {word} с такими параметрами уже существует'
             
@@ -112,13 +112,13 @@ class BotDB:
         words = self.cursor.execute("SELECT * FROM key_words").fetchall()
         return words
     
-    def delete_keyword(self, word):
-        category_exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ?", (word,)).fetchone()
+    def delete_keyword(self, word, category, under_category, city):
+        category_exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ? AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city)).fetchone()
         
         if category_exists:
-            self.cursor.execute("DELETE FROM key_words WHERE word = ?", (word,))
+            self.cursor.execute("DELETE FROM key_words WHERE word = ?AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city))
             self.db.commit()
-            return f'Слово {word} удалено'
+            return f'Слово {word} удалено\nКатегория: {category}\nПод категория: {under_category}\nГород: {city}\n'
         else:
             return f'Невозможно удалить слово {word}'
         
@@ -190,10 +190,10 @@ class BotDB:
         selectors = self.cursor.execute("SELECT * FROM selectors WHERE category_name = ?", (category, )).fetchall()
         return selectors
     
-    def delete_selector(self, id):
-        selector_exsits = self.cursor.execute("SELECT * FROM selectors WHERE id = ?", (id,)).fetchone()
+    def delete_selector(self, category, under_category, city):
+        selector_exsits = self.cursor.execute("SELECT * FROM selectors WHERE category = ? AND under_category = ? AND city = ?", (category, under_category, city)).fetchone()
         if selector_exsits:
-            self.cursor.execute("DELETE FROM selectors WHERE id = ?", (id,))
+            self.cursor.execute("DELETE FROM selectors WHERE category = ? AND under_category = ? AND city = ?", (category, under_category, city))
             self.db.commit()
     
     def user_ex(self, user_id):
@@ -202,7 +202,10 @@ class BotDB:
     
     def admin_ex(self, user_id):
         user_ex = self.cursor.execute("SELECT * FROM admins WHERE user_id = ?", (user_id, )).fetchone()
-        return user_ex
+        if user_ex:
+            return 0
+        else:
+            return None
     
     def add_chat(self, chat_id):
         chat_ex = self.cursor.execute("SELECT * FROM chats WHERE chat_id = ?", (chat_id,)).fetchone()
@@ -225,7 +228,6 @@ class BotDB:
         
     def get_kw(self, category, under_category, city):
         kw = self.cursor.execute("SELECT * FROM key_words WHERE category = ? AND under_category = ? AND city = ?", (category, under_category, city)).fetchall()
-        print(kw)
         if kw:
             pass
         else:
@@ -236,6 +238,31 @@ class BotDB:
     def get_chats(self):
         chats= self.cursor.execute("SELECT * FROM chats").fetchall()
         return chats     
-            
+    
+    def get_requests(self, id):
+        req = self.cursor.execute("SELECT * FROM key_words WHERE id = ?", (id,)).fetchone()
+        return req     
+    
+    def delete_request(self, word, category, under_category, city):
+        exists = self.cursor.execute("SELECT * FROM key_words WHERE word = ? AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city)).fetchone()
+        
+        if exists:
+            self.cursor.execute("DELETE FROM key_words WHERE word = ? AND category = ? AND under_category = ? AND city = ?", (word, category, under_category, city))
+            self.db.commit()
+            answer = f'Слово {word} удалено\nКатегория: {category}\nПод категория: {under_category}\nГород: {city}\n'
+        else:
+            answer = f'Невозможно удалить слово {word}'
+        
+        selectors = self.cursor.execute("SELECT * FROM selectors").fetchall()
+        if selectors:    
+            for selector in selectors:
+                kws = self.cursor.execute("SELECT * FROM key_words WHERE category = ? AND under_category = ? AND city = ?", (selector[1], selector[2], selector[3])).fetchall()
+                if not kws:
+                    self.cursor.execute("DELETE FROM selectors WHERE category_name = ? AND under_category_name = ? AND city = ?", (selector[1], selector[2], selector[3])).fetchall()
+                    self.db.commit()
+                
+        return answer
+        
+          
     def close_db(self):
         self.db.close()

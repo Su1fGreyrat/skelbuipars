@@ -19,40 +19,8 @@ db = BotDB()
 async def start_cmd(message: Message, state: FSMContext):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    admin_ex = db.admin_ex(user_id)
-    if admin_ex:
-        await message.answer(f'Добро пожаловать! {message.from_user.full_name}', reply_markup=kb.main)
-    else:
-        db.new_user(user_id=user_id, name=user_name)
-        await message.answer('Добро пожаловать! Введите логин')
-        await state.set_state(states.LogInState.login)
-
-@router.message(states.LogInState.login, F.text)
-async def new_category(message: Message, state: FSMContext):
-    await state.update_data(login=message.text)
-    await message.reply('Введите пароль')
-    await state.set_state(states.LogInState.password)
-    
-
-@router.message(states.LogInState.password, F.text)
-async def new_category(message: Message, state: FSMContext):
-    await state.update_data(password=message.text)
-    data = await state.get_data()
-    
-    login = config('LOGIN')  
-    password = config('PASSWORD')    
-      
-    if str(login) == data['login']:
-        if str(password) == data['password']:
-            await message.answer(f'✅ Логин и пароль подтвержденны. Здравствуйте! {message.from_user.full_name}', reply_markup=kb.main)
-            db.add_to_admins(message.from_user.id, message.from_user.full_name)
-        else:
-            await message.answer('❌ Логин или пароль введенны неверно!')
-    else:
-        await message.answer('❌ Логин или пароль введенны неверно!')
-        
-        
-    await state.clear()
+    await message.answer(f'Добро пожаловать! {message.from_user.full_name}', reply_markup=kb.main)
+    db.new_user(user_id=user_id, name=user_name)
 
 @router.message(Command('update'))
 async def update(message: types.Message, state: FSMContext):
@@ -81,6 +49,8 @@ async def chats(message: Message):
         
     await bot.send_message(message.from_user.id, answer)
     
+
+    
 @router.message()
 async def handler_msg(message: Message):
     try:
@@ -88,6 +58,7 @@ async def handler_msg(message: Message):
         await message.answer(answer)
     except:
         pass
+    
 @router.callback_query()
 async def callback_query_handler(callback_query: types.CallbackQuery, state: FSMContext):
     text = callback_query.data

@@ -16,10 +16,11 @@ import parsing
 
 db = BotDB()
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.INFO, filename="Skelbui.log",filemode="w",
+                    format="%(asctime)s %(levelname)s %(message)s")
 
 async def start_bot():
-    dp.include_routers(request.router, user_cmd.router, newsletter.router)
+    dp.include_routers(request.router, newsletter.router)
     await dp.start_polling(bot) 
 
 def start_bot_sync():
