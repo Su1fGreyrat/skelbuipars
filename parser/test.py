@@ -1,15 +1,16 @@
-def check_array(arr):
-    # Проверяем, что все элементы массива содержат цифры от 1 до 10
-    is_valid = all(any(char.isdigit() and 1 <= int(char) <= 10 for char in item) for item in arr)
+# Ваш исходный кортеж
+my_tuple = (2, 'Macbook', 'Компьютерия', 'Компьютеры', 'Vilnius')
 
-    # Если все условия выполняются, возвращаем True
-    return is_valid
+# Предложение для проверки
+sentence = "macbook icloud"
 
-# Пример использования функции
-my_array = ['Vilnius, 55 мин. назад', 'Vilnius, 1 мин. назад', 'Vilnius, 9 мин. назад']
-result = check_array(my_array)
+# Делим фразу и предложение на отдельные слова и преобразуем их к нижнему регистру
+phrase_words = [word.lower() for word in my_tuple[1].split()]
+sentence_words = [word.lower() for word in sentence.split()]
 
-if result:
-    print("Массив соответствует условиям.")
+# Проверяем наличие нужных слов
+if all(word in sentence_words for word in phrase_words):
+    print("Все слова найдены в предложении.")
 else:
-    print("Массив не соответствует условиям.")
+    print("Не все слова найдены в предложении.")
+

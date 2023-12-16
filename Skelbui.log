@@ -1,128 +1,27 @@
-2023-12-13 17:20:48,928 INFO EROR IN PROC LINK
-2023-12-13 17:23:13,068 INFO pagination
-2023-12-13 17:23:13,086 INFO pagination
-2023-12-13 17:23:13,102 INFO pagination
-2023-12-13 17:23:13,119 INFO pagination
-2023-12-13 17:23:13,135 INFO pagination
-2023-12-13 17:23:13,151 INFO pagination
-2023-12-13 17:23:13,168 INFO pagination
-2023-12-13 17:23:13,185 INFO pagination
-2023-12-13 17:23:13,203 INFO pagination
-2023-12-13 17:23:13,221 INFO pagination
-2023-12-13 17:23:13,238 INFO pagination
-2023-12-13 17:23:13,254 INFO pagination
-2023-12-13 17:23:13,270 INFO pagination
-2023-12-13 17:23:13,287 INFO pagination
-2023-12-13 17:23:13,303 INFO pagination
-2023-12-13 17:23:13,319 INFO get ad
-2023-12-13 17:23:13,319 INFO Start
-2023-12-13 17:26:22,127 INFO pagination
-2023-12-13 17:26:22,146 INFO pagination
-2023-12-13 17:26:22,163 INFO pagination
-2023-12-13 17:26:22,181 INFO pagination
-2023-12-13 17:26:22,198 INFO pagination
-2023-12-13 17:26:22,215 INFO pagination
-2023-12-13 17:26:22,232 INFO pagination
-2023-12-13 17:26:22,250 INFO pagination
-2023-12-13 17:26:22,267 INFO pagination
-2023-12-13 17:26:22,283 INFO pagination
-2023-12-13 17:26:22,300 INFO pagination
-2023-12-13 17:26:22,319 INFO pagination
-2023-12-13 17:26:22,337 INFO pagination
-2023-12-13 17:26:22,354 INFO pagination
-2023-12-13 17:26:22,371 INFO pagination
-2023-12-13 17:26:22,390 INFO get ad
-2023-12-13 17:28:41,221 INFO pagination
-2023-12-13 17:28:41,240 INFO pagination
-2023-12-13 17:28:41,259 INFO pagination
-2023-12-13 17:28:41,278 INFO pagination
-2023-12-13 17:28:41,297 INFO pagination
-2023-12-13 17:28:41,317 INFO pagination
-2023-12-13 17:28:41,335 INFO pagination
-2023-12-13 17:28:41,351 INFO pagination
-2023-12-13 17:28:41,368 INFO pagination
-2023-12-13 17:28:41,385 INFO pagination
-2023-12-13 17:28:41,403 INFO pagination
-2023-12-13 17:28:41,429 INFO pagination
-2023-12-13 17:28:41,451 INFO pagination
-2023-12-13 17:28:41,472 INFO pagination
-2023-12-13 17:28:41,492 INFO pagination
-2023-12-13 17:28:41,519 INFO get ad
-2023-12-13 17:28:41,519 INFO Start
-2023-12-13 17:31:42,307 INFO pagination
-2023-12-13 17:31:42,329 INFO pagination
-2023-12-13 17:31:42,346 INFO pagination
-2023-12-13 17:31:42,363 INFO pagination
-2023-12-13 17:31:42,384 INFO pagination
-2023-12-13 17:31:42,403 INFO pagination
-2023-12-13 17:31:42,421 INFO pagination
-2023-12-13 17:31:42,438 INFO pagination
-2023-12-13 17:31:42,456 INFO pagination
-2023-12-13 17:31:42,479 INFO pagination
-2023-12-13 17:31:42,497 INFO pagination
-2023-12-13 17:31:42,517 INFO pagination
-2023-12-13 17:31:42,533 INFO pagination
-2023-12-13 17:31:42,551 INFO pagination
-2023-12-13 17:31:42,571 INFO pagination
-2023-12-13 17:31:42,592 INFO get ad
-2023-12-13 17:33:57,392 INFO pagination
-2023-12-13 17:33:57,417 INFO pagination
-2023-12-13 17:33:57,443 INFO pagination
-2023-12-13 17:33:57,464 INFO pagination
-2023-12-13 17:33:57,485 INFO pagination
-2023-12-13 17:33:57,507 INFO pagination
-2023-12-13 17:33:57,527 INFO pagination
-2023-12-13 17:33:57,552 INFO pagination
-2023-12-13 17:33:57,622 INFO pagination
-2023-12-13 17:33:57,680 INFO pagination
-2023-12-13 17:33:57,719 INFO pagination
-2023-12-13 17:33:57,766 INFO pagination
-2023-12-13 17:33:57,805 INFO pagination
-2023-12-13 17:33:57,835 INFO pagination
-2023-12-13 17:33:57,862 INFO pagination
-2023-12-13 17:33:57,901 INFO get ad
-n 484 ms by bot id=6873191639
-2023-12-13 17:26:18,168 INFO Update id=392101316 is handled. Duration 281 ms by bot id=6873191639
-2023-12-13 17:26:40,642 INFO Update id=392101317 is handled. Duration 531 ms by bot id=6873191639
-2023-12-13 17:26:57,353 INFO Update id=392101318 is handled. Duration 625 ms by bot id=6873191639
-2023-12-13 17:27:03,283 INFO Update id=392101319 is handled. Duration 672 ms by bot id=6873191639
-2023-12-13 17:27:07,476 INFO Update id=392101320 is handled. Duration 327 ms by bot id=6873191639
-2023-12-13 17:27:09,812 INFO Update id=392101321 is handled. Duration 312 ms by bot id=6873191639
-2023-12-13 17:27:32,850 INFO Update id=392101322 is handled. Duration 405 ms by bot id=6873191639
-2023-12-13 17:27:37,054 INFO Update id=392101323 is handled. Duration 483 ms by bot id=6873191639
-2023-12-13 17:27:40,956 INFO Update id=392101324 is handled. Duration 485 ms by bot id=6873191639
-2023-12-13 17:27:43,465 INFO Update id=392101325 is handled. Duration 296 ms by bot id=6873191639
-2023-12-13 17:27:48,918 INFO Update id=392101326 is handled. Duration 313 ms by bot id=6873191639
-2023-12-13 17:27:51,342 INFO Update id=392101327 is handled. Duration 296 ms by bot id=6873191639
-2023-12-13 17:28:50,419 INFO Update id=392101328 is handled. Duration 453 ms by bot id=6873191639
-2023-12-13 17:29:28,710 INFO Update id=392101329 is handled. Duration 593 ms by bot id=6873191639
-2023-12-13 17:29:36,280 INFO Update id=392101330 is handled. Duration 656 ms by bot id=6873191639
-2023-12-13 17:29:39,585 INFO Update id=392101331 is handled. Duration 437 ms by bot id=6873191639
-2023-12-13 17:29:43,741 INFO Update id=392101332 is handled. Duration 296 ms by bot id=6873191639
-2023-12-13 17:29:45,778 INFO Update id=392101333 is handled. Duration 391 ms by bot id=6873191639
-2023-12-13 17:29:52,015 INFO Update id=392101334 is handled. Duration 14 ms by bot id=6873191639
-2023-12-13 17:29:56,552 INFO Update id=392101335 is handled. Duration 281 ms by bot id=6873191639
-2023-12-13 17:30:03,958 INFO Update id=392101336 is handled. Duration 421 ms by bot id=6873191639
-2023-12-13 17:30:07,413 INFO Update id=392101337 is handled. Duration 438 ms by bot id=6873191639
-2023-12-13 17:30:13,209 INFO Update id=392101338 is handled. Duration 468 ms by bot id=6873191639
-2023-12-13 17:30:18,506 INFO Update id=392101339 is handled. Duration 312 ms by bot id=6873191639
-2023-12-13 17:30:20,692 INFO Update id=392101340 is handled. Duration 359 ms by bot id=6873191639
-2023-12-13 17:30:24,377 INFO Update id=392101341 is handled. Duration 235 ms by bot id=6873191639
-2023-12-13 17:30:27,978 INFO Update id=392101342 is handled. Duration 530 ms by bot id=6873191639
-2023-12-13 17:30:31,881 INFO Update id=392101343 is handled. Duration 422 ms by bot id=6873191639
-2023-12-13 17:30:35,176 INFO Update id=392101344 is handled. Duration 406 ms by bot id=6873191639
-2023-12-13 17:30:39,565 INFO Update id=392101345 is handled. Duration 453 ms by bot id=6873191639
-2023-12-13 17:30:42,351 INFO Update id=392101346 is handled. Duration 500 ms by bot id=6873191639
-2023-12-13 17:30:48,654 INFO Update id=392101347 is handled. Duration 3610 ms by bot id=6873191639
-2023-12-13 17:31:01,606 INFO Update id=392101348 is handled. Duration 202 ms by bot id=6873191639
-2023-12-13 17:31:12,784 INFO Update id=392101349 is handled. Duration 500 ms by bot id=6873191639
-2023-12-13 17:31:23,239 INFO Update id=392101350 is handled. Duration 593 ms by bot id=6873191639
-2023-12-13 17:31:25,617 INFO Update id=392101351 is handled. Duration 312 ms by bot id=6873191639
-2023-12-13 17:31:32,259 INFO Update id=392101352 is handled. Duration 312 ms by bot id=6873191639
-2023-12-13 17:31:35,149 INFO Update id=392101353 is handled. Duration 547 ms by bot id=6873191639
-2023-12-13 17:31:35,415 INFO Update id=392101354 is handled. Duration 250 ms by bot id=6873191639
-2023-12-13 17:31:40,056 INFO Update id=392101355 is handled. Duration 468 ms by bot id=6873191639
-2023-12-13 17:31:42,262 INFO Update id=392101356 is handled. Duration 437 ms by bot id=6873191639
-2023-12-13 17:31:45,103 INFO Update id=392101357 is handled. Duration 280 ms by bot id=6873191639
-2023-12-13 17:31:49,866 INFO Update id=392101358 is handled. Duration 312 ms by bot id=6873191639
-2023-12-13 17:31:52,254 INFO Update id=392101359 is handled. Duration 422 ms by bot id=6873191639
+2023-12-16 21:14:51,537 INFO get ad
+2023-12-16 21:15:06,761 INFO get ad
+2023-12-16 21:15:25,420 INFO get ad
+2023-12-16 21:15:25,420 INFO Star2023-12-16 21:22:29,516 INFO Polling stopped
+2023-12-16 21:22:29,788 INFO Polling stopped for bot @skelbiu_suintos_bot id=6873191639 - 'skelbiu.lt'
+2023-12-16 21:16:28,882 INFO get ad
+2023-12-16 21:16:44,597 INFO get ad
+2023-12-16 21:16:59,555 INFO get ad
+2023-12-16 21:16:59,555 INFO Start
+2023-12-16 21:17:14,484 INFO get ad
+2023-12-16 21:17:22,718 ERROR EROR IN PROC LINK
+2023-12-16 21:17:45,460 INFO get ad
+2023-12-16 21:18:00,389 INFO get ad
+2023-12-16 21:18:14,945 INFO get ad
+2023-12-16 21:18:14,946 INFO Start
+2023-12-16 21:19:24,080 ERROR EROR IN PROC LINK
+2023-12-16 21:19:46,531 INFO get ad
+2023-12-16 21:20:27,257 INFO pagination
+2023-12-16 21:20:28,683 INFO get ad
+2023-12-16 21:21:32,621 INFO pagination
+2023-12-16 21:21:34,020 INFO pagination
+2023-12-16 21:21:35,416 INFO pagination
+2023-12-16 21:21:36,782 INFO get ad
+2023-12-16 21:21:36,782 INFO Start
+2023-12-16 21:22:08,451 INFO pagination
+2023-12-16 21:22:09,845 INFO get ad
+2023-12-16 21:22:30,037 INFO EROR SELECTOR PROC

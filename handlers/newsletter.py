@@ -12,7 +12,6 @@ db = BotDB()
 
 async def handler(name, price, city, link):
     chats = db.get_chats()
-    admins = db.get_users()
     try:
         for chat in chats:
             await bot.send_message(chat[2], f'{name}\n{price}\n{city}\n<a href="{link}">Ссылка</a>', parse_mode='HTML')
@@ -22,11 +21,8 @@ async def handler(name, price, city, link):
     
 
 async def handler_to_admin(name, price, city, link):
-    print("AAAAAA")
-    admins = db.get_users()
     try:
-        for chat in admins:
-            await bot.send_message(chat[1], f'{name}\n{price}\n{city}\n<a href="{link}">Ссылка</a>', parse_mode='HTML')
+            await bot.send_message(6561544812, f'{name}\n{price}\n{city}\n<a href="{link}">Ссылка</a>', parse_mode='HTML')
             await asyncio.sleep(1)
     except:
         pass

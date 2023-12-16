@@ -1,5 +1,6 @@
 from database.data import BotDB
 from markup import inline as kb
+from markup import reply as rkb
 from utils import states
 from main import bot
 from decouple import config
@@ -18,7 +19,7 @@ db = BotDB()
 async def start_cmd(message: Message, state: FSMContext):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    await message.answer(f'Добро пожаловать! {message.from_user.full_name}', reply_markup=kb.main)
+    await message.answer(f'Добро пожаловать! {message.from_user.full_name}', reply_markup=rkb.main)
     db.new_user(user_id=user_id, name=user_name)
 
 @router.message(Command('update'))
@@ -71,9 +72,9 @@ async def delete_request(message: Message):
         keyboard = kb.make_row_inline_keyboard_for(for_='delete-request', items=formatted_categories)
         
         if formatted_categories:
-            await bot.send_message(message.from_user.id, 'Выберите ID селектора которого хотите удалить:', reply_markup=keyboard)
+            await bot.send_message(message.from_user.id, 'Выберите ID запроса которого хотите удалить:', reply_markup=keyboard)
         else:
-            await bot.send_message(message.from_user.id, f'Нет доступных селекторов')
+            await bot.send_message(message.from_user.id, f'Нет доступных запросов')
 
     
 @router.message(states.RequestState.name, F.text)
@@ -162,9 +163,9 @@ async def delete_request_db(callback_query: types.CallbackQuery, state: FSMConte
     db.delete_request(word=req[1], category=req[2], under_category=req[3], city=req[4])
     
     if request_id:
-        await bot.send_message(callback_query.from_user.id, f'Селектор с ID: {request_id} удален')
+        await bot.send_message(callback_query.from_user.id, f'Запрос с ID: {request_id} удален')
     else:
-        await bot.send_message(callback_query.from_user.id, f'Селектор с таким ID не найден')
+        await bot.send_message(callback_query.from_user.id, f'Запрос с таким ID не найден')
         
 @router.message()
 async def handler_msg(message: Message):

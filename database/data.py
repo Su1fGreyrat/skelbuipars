@@ -166,11 +166,14 @@ class BotDB:
         selectors = self.cursor.execute("SELECT * FROM selectors").fetchall()
         return selectors
     
-    def get_link(self, category, under_category, city):
+    def get_link(self, category, under_category, city, kw):
         if under_category:
             city_id = self.cursor.execute("SELECT uniq_id FROM cities WHERE name = ?", (city, )).fetchone()
             u_link = self.cursor.execute("SELECT link FROM under_categories WHERE name = ?", (under_category, )).fetchone()
-            link = str(u_link[0]) + f'?cities={city_id[0]}'
+            keyword = kw.replace(' ', '+')
+            print('wtf',keyword)
+            link = str(u_link[0]) + f'?cities={city_id[0]}&keywords={keyword}'
+            print(link)
         else:
             city_id = self.cursor.execute("SELECT uniq_id FROM cities WHERE name = ?", (city, )).fetchone()
             u_link = self.cursor.execute("SELECT link FROM categories WHERE name = ?", (category, )).fetchone()
@@ -228,11 +231,6 @@ class BotDB:
         
     def get_kw(self, category, under_category, city):
         kw = self.cursor.execute("SELECT * FROM key_words WHERE category = ? AND under_category = ? AND city = ?", (category, under_category, city)).fetchall()
-        if kw:
-            pass
-        else:
-            print(kw)
-            time.sleep(3)
         return kw   
         
     def get_chats(self):
